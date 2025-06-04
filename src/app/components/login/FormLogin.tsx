@@ -1,9 +1,67 @@
 'use client'
-import React from 'react'
+import React, { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { login } from '@/utils/auth'
+import { serialize } from "cookie";
+import { usePathname, useRouter } from "next/navigation";
 
 const FormLogin = () => {
+  const [loading, setLoading] = useState(false); // Estado de carga
+  const [error, setError] = useState(""); // Estado de error
+  const router = useRouter();
+  // Estados para el formulario
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const validate = () => {
+    if (!email || !password) {
+      setError('the email and password are required');
+      return false;
+    }
+
+    const emailRegex = /^([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/;
+    if (!emailRegex.test(email)) {
+      setError('Email error format');
+      return false;
+    }
+
+    const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/;
+    if (!passwordRegex.test(password)) {
+      setError('the password must contain at least 8 characters, one uppercase letter, one lowercase letter, and one number');
+      return false;
+    }
+
+    setError("");
+    return true;
+  };
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault(); // Evita la recarga de la página al enviar el formulario
+
+    if (!validate()) {
+      return;
+    }
+
+    setLoading(true); // Activa el estado de carga
+
+    try {
+      // Llama a la función de autenticación
+      const { access_token } = await login(email, password);
+
+      // Guardar el token en una cookie
+      document.cookie = serialize("token", access_token, {
+        path: "/",
+        maxAge: 3600,
+      });
+
+      // Redirige a la página de dashboard
+      router.push("/");
+    } catch (error) {
+      console.error(error);
+      setError('Error in login, please check your credentials and try again.');
+    } finally {
+      setLoading(false); // Desactiva el estado de carga
+    }
+  };
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="max-w-md w-full bg-white p-8 rounded-xl shadow-lg">
@@ -17,7 +75,7 @@ const FormLogin = () => {
         </div>
 
         {/* Form */}
-        <form className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700">
               Email address
@@ -29,6 +87,8 @@ const FormLogin = () => {
               required
               className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#7a02fa]"
               placeholder="you@example.com"
+              onChange={(e) => setEmail(e.target.value)}
+              value={email}
             />
           </div>
 
@@ -43,6 +103,8 @@ const FormLogin = () => {
               required
               className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#7a02fa]"
               placeholder="••••••••"
+              onChange={(e) => setPassword(e.target.value)}
+              value={password}
             />
           </div>
 

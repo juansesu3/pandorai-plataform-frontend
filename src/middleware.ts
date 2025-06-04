@@ -17,7 +17,7 @@ export default function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  const token = req.cookies.get("user_token")?.value;
+  const token = req.cookies.get('token');
 
   // Definir rutas protegidas (puedes agregar más aquí)
   const protectedRoutes = ["/", "/agenda", "/invitados"];

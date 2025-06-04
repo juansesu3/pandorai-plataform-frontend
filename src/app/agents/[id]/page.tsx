@@ -1,10 +1,10 @@
+import AgentDetail from '@/app/components/agents/AgentDetail'
 import React from 'react'
-import FormRegister from '../components/register/FormRegister'
 
 const page = () => {
   return (
     <div>
-      <FormRegister/>
+        <AgentDetail/>
     </div>
   )
 }
