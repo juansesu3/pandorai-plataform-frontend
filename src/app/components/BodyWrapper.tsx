@@ -16,7 +16,7 @@ export default function BodyWrapper({ children }: { children: React.ReactNode })
     <Provider store={store}>
       <body className={bodyClass}>
         {!isAuthRoute && <Sidebar />}
-        <main className="">
+        <main className="w-full">
           {children}
           {!isAuthRoute && <ChatTest />}
         </main>

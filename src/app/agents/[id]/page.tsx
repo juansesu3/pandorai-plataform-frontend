@@ -1,10 +1,14 @@
+'use client'
 import AgentDetail from '@/app/components/agents/AgentDetail'
+import { useParams } from 'next/navigation';
 import React from 'react'
 
 const page = () => {
+  const params = useParams();
+  const id = params?.id as string;
   return (
     <div>
-        <AgentDetail/>
+        <AgentDetail agentId={id} />
     </div>
   )
 }
