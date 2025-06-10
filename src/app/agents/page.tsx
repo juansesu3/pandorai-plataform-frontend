@@ -1,10 +1,16 @@
 'use client'
 import React from 'react'
 import AgentCard from '../components/agents/AgentCard'
+import Link from 'next/link'
 
 const page = () => {
     return (
-        <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className='p-8 space-y-8'>
+           <Link href="/agents/create-agent" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm">
+          + Crear Nuevo Agente
+        </Link>
+
+        <div className=" grid grid-cols-1 md:grid-cols-2 gap-6">
 
             <AgentCard
                 title="Agente de Recomendación"
@@ -22,7 +28,6 @@ const page = () => {
                     console.log("Gestionar Recomendación");
                 }}
             />
-
             <AgentCard
                 title="Agente de Reservas"
                 description="Automatiza el sistema de reservas con disponibilidad, confirmaciones y notificaciones."
@@ -38,6 +43,7 @@ const page = () => {
                     console.log("Gestionar Reservas");
                 }}
             />
+        </div>
         </div>
     )
 }

@@ -8,8 +8,8 @@ const AgentDetail: React.FC = () => {
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-800">Agente de Recomendación</h1>
-          <p className="text-gray-500 mt-1">Personaliza productos usando comportamiento del usuario</p>
+          <h1 className="text-3xl font-bold text-gray-800">Agente de Reservas</h1>
+          <p className="text-gray-500 mt-1">Automatiza el sistema de reservas con disponibilidad, confirmaciones y notificaciones.</p>
         </div>
         <Link href="/agents/1/config" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm">
           Configurar Agente
@@ -46,12 +46,12 @@ const AgentDetail: React.FC = () => {
           <div>
             <h3 className="font-semibold text-gray-700">Descripción</h3>
             <p className="text-gray-600">
-              Este agente analiza sesiones de navegación y patrones de compra para ofrecer productos relevantes en tiempo real.
+            Agente inteligente que gestiona reservas de forma automática, permitiendo a los clientes agendar, modificar o cancelar citas en tiempo real. Ideal para negocios con servicios por agenda.
             </p>
           </div>
           <div>
             <h3 className="font-semibold text-gray-700">Cliente Integrado</h3>
-            <p className="text-gray-600">TiendaOnlineXYZ</p>
+            <p className="text-gray-600">Barberia Michell</p>
           </div>
           <div>
             <h3 className="font-semibold text-gray-700">Parámetros del modelo</h3>

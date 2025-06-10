@@ -1,13 +1,14 @@
+// app/layout.tsx
 import type { Metadata } from "next";
 import "./globals.css";
 import { Roboto } from 'next/font/google'
-import Sidebar from "./components/SideBar";
+import BodyWrapper from "./components/BodyWrapper";
 
 const roboto = Roboto({
   subsets: ['latin'],
-  weight: ['400', '500', '700'], // puedes ajustar los pesos que necesites
-  variable: '--font-roboto',     // esto define una variable CSS opcional
-})
+  weight: ['400', '500', '700'],
+  variable: '--font-roboto',
+});
 
 export const metadata: Metadata = {
   title: "PandorAI Platform",
@@ -21,12 +22,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={roboto.className}>
-      <body className="flex flex-col md:flex-row min-h-screen bg-gray-100 text-gray-900">
-        <Sidebar />
-        <main className=" p-2">
-          {children}
-        </main>
-      </body>
+      
+        <BodyWrapper>{children}</BodyWrapper>
+
     </html>
   );
 }
