@@ -9,6 +9,7 @@ import { FaTimes, FaHome } from "react-icons/fa";
 import { IoIosMenu } from "react-icons/io";
 import { VscRobot } from "react-icons/vsc";
 import { CiSettings } from "react-icons/ci";
+import { RiFolderUserFill } from "react-icons/ri";
 
 export default function Sidebar() {
     const [isOpen, setIsOpen] = useState(false);
@@ -82,6 +83,12 @@ export default function Sidebar() {
                             <Link href="/agents" className="flex items-center gap-2 p-2 hover:bg-[#f9fafb] rounded group-hover:text-[#7a02fb] transition-all duration-300">
                                 <VscRobot size={25} className="text-gray-300 group-hover:text-[#7a02fb] transition-all duration-300" />
                                 Agents
+                            </Link>
+                        </li>
+                        <li className="group">
+                            <Link href="/client" className="flex items-center gap-2 p-2 hover:bg-[#f9fafb] rounded group-hover:text-[#7a02fb] transition-all duration-300">
+                                <RiFolderUserFill size={25} className="text-gray-300 group-hover:text-[#7a02fb] transition-all duration-300" />
+                                Client
                             </Link>
                         </li>
                         <li className="group">

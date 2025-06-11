@@ -131,12 +131,12 @@ const AgentDetail: React.FC<Props> = ({ agentId }) => {
             <div className="p-6 space-y-4">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="font-semibold text-gray-700">Clientes integrados</h3>
-                <button
+                <Link href={`/client/create-client`}
                   onClick={() => alert('Aquí iría la lógica para crear un nuevo cliente')}
                   className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 text-sm"
                 >
                   + Nuevo Cliente
-                </button>
+                </Link>
               </div>
   
               {loadingClients ? (
