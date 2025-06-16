@@ -11,65 +11,88 @@ interface FormData {
     workingHoursStart: string;
     workingHoursEnd: string;
     notes?: string;
-}
+    agentId: string; // <-- Añadido aquí
+  }
 
 const FormIntegrateClient: React.FC = () => {
     const [agents, setAgents] = useState<any[]>([]);
     const [selectedAgentId, setSelectedAgentId] = useState<string>('');
-
-    const getAgents = async () => {
-        try {
-            const response = await fetch('http://127.0.0.1:8000/agents/');
-            const data = await response.json();
-            setAgents(data);
-            console.log('🚀 Obteniendo agentes:', data);
-            return data;
-        } catch (error: any) {
-            console.error('❌ Error al obtener agentes:', error.message);
-            alert(error.message);
-        }
-    };
-    useEffect(() => {
-        setFormData(prev => ({ ...prev, agentId: selectedAgentId }));
-      }, [selectedAgentId]);
-    useEffect(() => {
-        getAgents().then(data => {
-            console.log('🚀 Obteniendo agentes:', data);
-        });
-    }, []);
     const [formData, setFormData] = useState<FormData>({
-        companyName: '',
-        contactName: '',
-        email: '',
-        phone: '',
-        businessType: '',
-        timezone: '',
-        workingHoursStart: '09:00',
-        workingHoursEnd: '17:00',
-        notes: '',
+      companyName: '',
+      contactName: '',
+      email: '',
+      phone: '',
+      businessType: '',
+      timezone: '',
+      workingHoursStart: '09:00',
+      workingHoursEnd: '17:00',
+      notes: '',
+      agentId: '', // <-- Inicializado aquí también
     });
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
-    };
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
+  
+    useEffect(() => {
+      const getAgents = async () => {
         try {
-            const response = await fetch('/api/integrate-client', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData)
-            });
-            if (response.ok) {
-                alert('Cliente integrado exitosamente');
-            } else {
-                alert('Error al integrar cliente');
-            }
-        } catch (err) {
-            console.error('Error:', err);
+          const response = await fetch('http://127.0.0.1:8000/agents/');
+          const data = await response.json();
+          setAgents(data);
+        } catch (error: any) {
+          console.error('❌ Error al obtener agentes:', error.message);
+          alert(error.message);
         }
+      };
+      getAgents();
+    }, []);
+  
+    // Cuando cambia el agente seleccionado, se actualiza el formData
+    useEffect(() => {
+      setFormData(prev => ({ ...prev, agentId: selectedAgentId }));
+    }, [selectedAgentId]);
+  
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+      const { name, value } = e.target;
+      setFormData(prev => ({ ...prev, [name]: value }));
+    };
+  
+    const handleSubmit = async (e: React.FormEvent) => {
+      e.preventDefault();
+  
+      if (!formData.agentId) {
+        alert("Selecciona un agente antes de continuar.");
+        return;
+      }
+  
+      try {
+        const response = await fetch('http://127.0.0.1:8000/clients', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData),
+        });
+  
+        if (response.ok) {
+          const result = await response.json();
+          alert('✅ Cliente integrado exitosamente con ID: ' + result.client_id);
+          // Opcional: resetear el formulario
+          setFormData({
+            companyName: '',
+            contactName: '',
+            email: '',
+            phone: '',
+            businessType: '',
+            timezone: '',
+            workingHoursStart: '09:00',
+            workingHoursEnd: '17:00',
+            notes: '',
+            agentId: selectedAgentId,
+          });
+        } else {
+          const error = await response.json();
+          alert('❌ Error al integrar cliente: ' + error.detail);
+        }
+      } catch (err) {
+        console.error('Error:', err);
+        alert('❌ Error al enviar datos. Revisa la consola.');
+      }
     };
 
     return (

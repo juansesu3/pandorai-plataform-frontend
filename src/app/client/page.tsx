@@ -1,8 +1,11 @@
 import React from 'react'
+import ClientPortfolio from '../components/client/ClientPortfolio'
 
 const page = () => {
   return (
-    <div>page</div>
+    <div>
+      <ClientPortfolio/>
+    </div>
   )
 }
 

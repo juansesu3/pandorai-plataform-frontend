@@ -20,8 +20,10 @@ interface Client {
   name: string;
   email: string;
   joinedAt: string;
+  companyName: string; // Added property
+  created_at: string; // Added property
 }
-type Tab = 'details' | 'integrations' | 'metrics'|'clients';;
+type Tab = 'details' | 'integrations' | 'metrics' | 'clients';;
 
 const AgentDetail: React.FC<Props> = ({ agentId }) => {
   const [agent, setAgent] = useState<Agent | null>(null);
@@ -46,34 +48,25 @@ const AgentDetail: React.FC<Props> = ({ agentId }) => {
     if (agentId) fetchAgent();
   }, [agentId]);
 
-    // Simular fetch de clientes cuando cambia el tab a "clients"
-    useEffect(() => {
-      async function fetchClients() {
-        setLoadingClients(true);
-        try {
-          // Aquí pondrías tu endpoint real para obtener clientes del agente
-          // const res = await fetch(`http://127.0.0.1:8000/agents/${agentId}/clients`);
-          // const data = await res.json();
-  
-          // Simulación datos de clientes:
-          const data: Client[] = [
-            { id: '1', name: 'Barberia Michel', email: 'clientea@example.com', joinedAt: '2025-01-10' },
-            { id: '2', name: 'Beauty Salon', email: 'clienteb@example.com', joinedAt: '2025-03-15' },
-          ];
-  
-          setClients(data);
-        } catch (error) {
-          console.error('Error loading clients:', error);
-        } finally {
-          setLoadingClients(false);
-        }
+  // Simular fetch de clientes cuando cambia el tab a "clients"
+  useEffect(() => {
+    async function fetchClients() {
+      setLoadingClients(true);
+      try {
+        const res = await fetch(`http://127.0.0.1:8000/agents/${agentId}/clients`);
+        const dataclients = await res.json();
+        setClients(dataclients);
+      } catch (error) {
+        console.error('Error loading clients:', error);
+      } finally {
+        setLoadingClients(false);
       }
+    }
   
-      if (activeTab === 'clients') {
-        fetchClients();
-      }
-    }, [activeTab, agentId]);
-
+    if (activeTab === 'clients') {
+      fetchClients();
+    }
+  }, [activeTab, agentId]);
   if (loading) return <p>Loading...</p>;
   if (!agent) return <p>Agent not found.</p>;
 
@@ -126,38 +119,40 @@ const AgentDetail: React.FC<Props> = ({ agentId }) => {
           </div>
         );
 
-        case 'clients':
-          return (
-            <div className="p-6 space-y-4">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="font-semibold text-gray-700">Clientes integrados</h3>
-                <Link href={`/client/create-client`}
-                  onClick={() => alert('Aquí iría la lógica para crear un nuevo cliente')}
-                  className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 text-sm"
-                >
-                  + Nuevo Cliente
-                </Link>
-              </div>
-  
-              {loadingClients ? (
-                <p>Cargando clientes...</p>
-              ) : clients.length === 0 ? (
-                <p className="text-gray-500">No hay clientes integrados aún.</p>
-              ) : (
-                <ul className="divide-y divide-gray-200">
-                  {clients.map((client) => (
-                    <li key={client.id} className="py-3 flex flex-col md:flex-row md:justify-between md:items-center">
-                      <div>
-                        <p className="font-medium text-gray-800">{client.name}</p>
-                        <p className="text-gray-600 text-sm">{client.email}</p>
-                      </div>
-                      <div className="text-gray-500 text-sm">Desde: {new Date(client.joinedAt).toLocaleDateString()}</div>
-                    </li>
-                  ))}
-                </ul>
-              )}
+      case 'clients':
+        return (
+          <div className="p-6 space-y-4">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="font-semibold text-gray-700">Clientes integrados</h3>
+              <Link href={`/client/create-client`}
+                onClick={() => alert('Aquí iría la lógica para crear un nuevo cliente')}
+                className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 text-sm"
+              >
+                + Nuevo Cliente
+              </Link>
             </div>
-          );
+
+            {loadingClients ? (
+              <p>Cargando clientes...</p>
+            ) : clients.length === 0 ? (
+              <p className="text-gray-500">No hay clientes integrados aún.</p>
+            ) : (
+              <ul className="divide-y divide-gray-200">
+              {clients.map((client) => (
+                <Link key={client.id} href={`/client/${client.id}`} className="py-3 flex flex-col md:flex-row md:justify-between md:items-center">
+                  <div>
+                    <p className="font-medium text-gray-800">{client.companyName}</p>
+                    <p className="text-gray-600 text-sm">{client.email}</p>
+                  </div>
+                  <div className="text-gray-500 text-sm">
+                    Desde: {new Date(client.created_at).toLocaleDateString()}
+                  </div>
+                </Link>
+              ))}
+            </ul>
+            )}
+          </div>
+        );
 
       default:
         return null;
@@ -200,11 +195,10 @@ const AgentDetail: React.FC<Props> = ({ agentId }) => {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`text-sm py-2 px-4 font-medium ${
-                activeTab === tab
+              className={`text-sm py-2 px-4 font-medium ${activeTab === tab
                   ? 'text-blue-600 border-b-2 border-blue-600'
                   : 'text-gray-600 hover:text-blue-600'
-              }`}
+                }`}
             >
               {tab.charAt(0).toUpperCase() + tab.slice(1)}
             </button>
