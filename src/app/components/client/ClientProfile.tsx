@@ -59,7 +59,7 @@ export default function ClientProfile({ clientId }: { clientId: string }) {
       {/* Header */}
       <div className="flex items-center space-x-4">
         <div className="w-16 h-16 rounded-full bg-blue-600 text-white flex items-center justify-center text-xl font-bold">
-          {getInitials(client.companyName)}
+          {getInitials(client.companyName || 'N/A')}
         </div>
         <div>
           <h2 className="text-2xl font-bold text-gray-800">{client.companyName}</h2>
@@ -98,34 +98,54 @@ export default function ClientProfile({ clientId }: { clientId: string }) {
 
       {/* Agentes */}
       <div className="border-t pt-4 space-y-2">
-  <h3 className="text-lg font-semibold text-gray-700">
-    Agentes Integrados ({agents.length})
-  </h3>
+        <h3 className="text-lg font-semibold text-gray-700">
+          Agentes Integrados ({agents.length})
+        </h3>
 
-  <ul className="text-gray-700 divide-y divide-gray-200">
-    {agents.map(agent => (
-      <li key={agent.id} className="py-3 space-y-1">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-          <div>
-            <span className="font-medium text-gray-800">{agent.name}</span> — {agent.model}
-          </div>
+        <ul className="text-gray-700 divide-y divide-gray-200">
+          {agents.map(agent => (
+            <li key={agent.id} className="py-3 space-y-1 p-4 shadow-sm rounded hover:bg-gray-50 transition">
 
-          {/* Configuración individual */}
-          <Link
-            href={`/client/${client?.id}/agents/${agent.id}/config`}
-            className="mt-2 md:mt-0 text-sm bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-1.5 rounded"
-          >
-            ⚙️ Settings
-          </Link>
-        </div>
-      </li>
-    ))}
-  </ul>
 
-  <button className="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-    + Asignar nuevo agente
-  </button>
-</div>
+              {/* Configuración individual */}
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div>
+                  <span className="font-medium text-gray-800">{agent.name}</span> — {agent.model}
+                </div>
+
+                <div className="flex flex-wrap gap-2">
+                  <Link
+                    href={`/client/${client?.id}/agents/${agent.id}/config`}
+                    className="text-sm bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-1.5 rounded"
+                  >
+                    ⚙️ Configuración
+                  </Link>
+
+                  <Link
+                    href={`/client/${client?.id}/agents/${agent.id}/calendar`}
+                    className="text-sm bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-1.5 rounded"
+                  >
+                    📅 Ver Agenda
+                  </Link>
+
+                  <Link
+                    href={`/client/${client?.id}/agents/${agent.id}/interactions`}
+                    className="text-sm bg-green-100 hover:bg-green-200 text-green-700 px-3 py-1.5 rounded"
+                  >
+                    💬 Interacciones
+                  </Link>
+                </div>
+              </div>
+
+
+            </li>
+          ))}
+        </ul>
+
+        <button className="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+          + Asignar nuevo agente
+        </button>
+      </div>
 
 
       {/* Acciones */}

@@ -14,3 +14,18 @@ html,body{
 .btn-primary {
   @apply bg-blue-600 text-white px-5 py-2 rounded-md hover:bg-blue-700 transition;
 }
+
+.rbc-calendar {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+}
+
+.rbc-event {
+  background-color: #2563eb !important; /* Tailwind blue-600 */
+  color: white !important;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.875rem;
+}
