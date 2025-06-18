@@ -2,6 +2,18 @@
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 
+interface Professional {
+  _id: string;
+  name: string;
+  specialty: string;
+  nextAppointment?: string; // ISO string
+  shifts: {
+    day: string;
+    enabled: boolean;
+    shifts: { start: string; end: string }[];
+  }[];
+}
+
 interface Client {
   id: string;
   name: string;
@@ -32,17 +44,21 @@ export default function ClientProfile({ clientId }: { clientId: string }) {
   const [client, setClient] = useState<Client | null>(null);
   const [metrics, setMetrics] = useState<Metrics | null>(null);
   const [agents, setAgents] = useState<AgentSummary[]>([]);
+  const [professionals, setProfessionals] = useState<Professional[]>([]); // 👈 Nuevo estado
+
 
   useEffect(() => {
     async function fetchData() {
-      const [clientRes, metricRes, agentsRes] = await Promise.all([
+      const [clientRes, metricRes, agentsRes, prosRes] = await Promise.all([
         fetch(`http://127.0.0.1:8000/clients/${clientId}`),
         fetch(`http://127.0.0.1:8000/clients/${clientId}/metrics`),
         fetch(`http://127.0.0.1:8000/clients/${clientId}/agents`),
+        fetch(`http://127.0.0.1:8000/clients/${clientId}/professionals`),
       ]);
       setClient(await clientRes.json());
       setMetrics(await metricRes.json());
       setAgents(await agentsRes.json());
+      setProfessionals(await prosRes.json()); // 👈 Agregamos profesionales
     }
 
     fetchData();
@@ -52,6 +68,13 @@ export default function ClientProfile({ clientId }: { clientId: string }) {
 
   const getInitials = (name: string) => {
     return name.split(' ').map(word => word[0]).join('').toUpperCase();
+  };
+
+  const formatTime = (iso: string) => {
+    return new Date(iso).toLocaleString('es-AR', {
+      dateStyle: 'short',
+      timeStyle: 'short'
+    });
   };
 
   return (
@@ -96,8 +119,78 @@ export default function ClientProfile({ clientId }: { clientId: string }) {
         )}
       </div>
 
+      {/* 🚀 Colaboradores */}
+      <div className="border-t border-gray-300 pt-4 space-y-2">
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-semibold text-gray-700">
+            Colaboradores / Profesionales ({professionals.length})
+          </h3>
+          <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+            + Agregar Colaborador
+          </button>
+        </div>
+
+        {professionals.length === 0 ? (
+          <p className="text-sm text-gray-500">No hay colaboradores aún.</p>
+        ) : (
+          <ul className="divide-y divide-gray-200 text-gray-800 flex flex-col gap-2">
+            {professionals.map((pro) => (
+              <li key={pro.id} className="p-4 space-y-1 hover:bg-gray-50 transition rounded flex justify-between items-center">
+
+                <div>
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-indigo-600 text-white rounded-full flex items-center justify-center font-bold">
+                        {getInitials(pro.name)}
+                      </div>
+                      <div>
+                        <h4 className="font-semibold">{pro.name}</h4>
+                        <p className="text-sm text-gray-500">{pro.specialty}</p>
+                      </div>
+                    </div>
+                    {pro.nextAppointment && (
+                      <span className="text-sm text-green-600">
+                        Próxima cita: {formatTime(pro.nextAppointment)}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Turnos habilitados */}
+                  <div className="mt-2 ml-12 text-sm text-gray-600">
+                    {pro.shifts
+                      .filter((d) => d.enabled)
+                      .map((d) => (
+                        <p key={d.day}>
+                          <strong className="capitalize">{d.day}:</strong>{' '}
+                          {d.shifts.map(s => `${s.start}–${s.end}`).join(', ')}
+                        </p>
+                      ))}
+                  </div>
+                </div>
+
+                <div className='flex flex-wrap gap-2'>
+                  <Link
+                    href={`/client/${client?.id}/agents/${pro.id}/config`}
+                    className="text-sm bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-1.5 rounded"
+                  >
+                    ⚙️ Configuración
+                  </Link>
+
+                  <Link
+                    href={`/client/${client?.id}/agents/${pro.id}/calendar`}
+                    className="text-sm bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-1.5 rounded"
+                  >
+                    📅 Ver Agenda
+                  </Link>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
       {/* Agentes */}
-      <div className="border-t pt-4 space-y-2">
+      <div className="border-t border-gray-300 pt-4 space-y-2">
         <h3 className="text-lg font-semibold text-gray-700">
           Agentes Integrados ({agents.length})
         </h3>

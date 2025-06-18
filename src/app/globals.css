@@ -29,3 +29,15 @@ html,body{
   border-radius: 4px;
   font-size: 0.875rem;
 }
+
+.agent-message p {
+  margin: 0.5em 0;
+}
+
+.agent-message strong {
+  color: #333;
+}
+
+.agent-message em {
+  color: #555;
+}

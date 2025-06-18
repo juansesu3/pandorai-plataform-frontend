@@ -16,7 +16,7 @@ export default function ChatTest() {
     const { isChatWindowOpen, userUUID } = useSelector((state: any) => state.chatbot);
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState("");
-    const [isOpen, setIsOpen] = useState(true);
+    const [isOpen, setIsOpen] = useState(false);
     const [isBotTyping, setIsBotTyping] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const ws = useRef<WebSocket | null>(null);
